@@ -1,5 +1,7 @@
 package engine.render.display;
 
+import engine.util.Keyboard;
+import engine.util.Mouse;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
@@ -26,6 +28,9 @@ public class Display {
 
   // The window handle
   private long window;
+
+  private static Keyboard keyboard;
+  private static Mouse mouse;
 
 
   public Display(int majorVersion, int minorVersion) {
@@ -106,6 +111,14 @@ public class Display {
       );
     } // the stack frame is popped automatically
 
+    keyboard = new Keyboard();
+    mouse = new Mouse();
+
+    glfwSetKeyCallback(window, keyboard);
+    glfwSetCursorPosCallback(window, mouse.getMouseMoveCallback());
+    glfwSetMouseButtonCallback(window, mouse.getMouseButtonsCallback());
+    glfwSetScrollCallback(window, mouse.getMouseScrollCallback());
+
     // Make the OpenGL context current
     glfwMakeContextCurrent(window);
 
@@ -146,4 +159,7 @@ public class Display {
     glfwSetErrorCallback(null).free();
   }
 
+  public long getID() {
+    return window;
+  }
 }

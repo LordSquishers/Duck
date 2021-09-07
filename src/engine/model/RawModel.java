@@ -2,7 +2,8 @@ package engine.model;
 
 public class RawModel {
 
-    private int vaoID, vertexCount;
+    private final int vaoID;
+    private final int vertexCount;
 
     public RawModel(int vaoID, int vertexCount) {
         this.vaoID = vaoID;

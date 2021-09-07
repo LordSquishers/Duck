@@ -53,8 +53,8 @@ final class Sync {
   /**
    * for calculating the averages the previous sleep/yield times are stored
    */
-  private RunningAvg sleepDurations = new RunningAvg(10);
-  private RunningAvg yieldDurations = new RunningAvg(10);
+  private final RunningAvg sleepDurations = new RunningAvg(10);
+  private final RunningAvg yieldDurations = new RunningAvg(10);
 
   /**
    * This method will initialise the sync method by setting initial
@@ -157,8 +157,8 @@ final class Sync {
 
     long avg() {
       long sum = 0;
-      for (int i = 0; i < this.slots.length; i++) {
-        sum += this.slots[i];
+      for (long slot : this.slots) {
+        sum += slot;
       }
       return sum / this.slots.length;
     }

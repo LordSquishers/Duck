@@ -2,7 +2,7 @@ package engine.texture;
 
 public class ModelTexture {
 
-    private int textureID;
+    private final int textureID;
 
     public ModelTexture(int textureID) {
         this.textureID = textureID;

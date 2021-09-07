@@ -1,12 +1,18 @@
 package duck;
 
+import engine.entity.Entity;
 import engine.model.Loader;
+import engine.model.RawModel;
 import engine.model.TexturedModel;
+import engine.model.obj.OBJFileLoader;
+import engine.render.Camera;
 import engine.render.EntityRenderer;
 import engine.render.display.DisplayManager;
 import engine.shader.shaders.EntityShader;
 import engine.texture.ModelTexture;
 import engine.util.Logger;
+import engine.util.Maths;
+import org.joml.Vector3f;
 
 import java.io.IOException;
 
@@ -20,46 +26,36 @@ public class Duck {
 
         Logger.INSTANCE.info(DUCK, "Initialising environment...");
         var loader = new Loader();
-        var eRen = new EntityRenderer();
 
         // Shaders
         var eShader = new EntityShader();
 
-        float[] vertices = {
-                -0.5f, 0.5f, 0f,//v0
-                -0.5f, -0.5f, 0f,//v1
-                0.5f, -0.5f, 0f,//v2
-                0.5f, 0.5f, 0f,//v3
-        };
+        // Renderers
+        var eRen = new EntityRenderer(eShader);
 
-        int[] indices = {
-                0,1,3,//top left triangle (v0, v1, v3)
-                3,1,2//bottom right triangle (v3, v1, v2)
-        };
-
-        float[] texCoords = {
-                0, 0,
-                0, 1,
-                1, 1,
-                1, 0
-        };
-
-        var triModel = loader.loadToVAO(vertices, indices, texCoords);
+        var modelData = OBJFileLoader.loadOBJ("stall.obj");
+        var rawModel = loader.loadToVAO(modelData);
         ModelTexture texture = null;
         try {
-            texture = new ModelTexture(loader.loadTexture("square.png"));
+            texture = new ModelTexture(loader.loadTexture("stallTexture.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        var fullModel = new TexturedModel(triModel, texture);
+
+        var fullModel = new TexturedModel(rawModel, texture);
+        var entity = new Entity(fullModel, new Vector3f(0, 0, -10), new Vector3f(90).mul(Maths.Y_AXIS), new Vector3f(1));
+        var camera = new Camera();
 
         Logger.INSTANCE.info(DUCK, "Environment initialised!");
         while (!display.isCloseRequested()) {
+            // movement
+            camera.move();
+
             // Entities
             eRen.prepare();
 
             eShader.start();
-            eRen.render(fullModel);
+            eRen.render(camera, entity, eShader);
             eShader.stop();
 
             display.update();

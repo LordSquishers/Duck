@@ -1,6 +1,6 @@
 package engine.shader.uniform;
 
-import engine.util.Vector3f;
+import org.joml.Vector3f;
 import org.lwjgl.opengl.GL20;
 
 public class Uniform3F extends Uniform<Vector3f> {

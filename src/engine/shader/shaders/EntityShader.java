@@ -6,7 +6,7 @@ import engine.util.Logger;
 
 public class EntityShader extends ShaderProgram {
 
-    public Uniform4F transformMat;
+    public Uniform4F transformMat, projectionMat, viewMat;
 
     public EntityShader() {
         super(ShaderType.ENTITY);
@@ -16,6 +16,8 @@ public class EntityShader extends ShaderProgram {
     @Override
     protected void initUniforms() {
         transformMat = new Uniform4F("transformMat", programID);
+        projectionMat = new Uniform4F("projectionMat", programID);
+        viewMat = new Uniform4F("viewMat", programID);
     }
 
     @Override

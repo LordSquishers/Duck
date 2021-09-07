@@ -33,7 +33,8 @@ public abstract class ShaderProgram {
     }
 
     protected int programID;
-    private int vshID, fshID;
+    private final int vshID;
+    private final int fshID;
 
     public ShaderProgram(ShaderType shaderType) {
         vshID = loadShader(shaderType, ShaderFileType.VERTEX);

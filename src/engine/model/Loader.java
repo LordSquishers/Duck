@@ -1,5 +1,6 @@
 package engine.model;
 
+import engine.model.obj.ModelData;
 import engine.util.Logger;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
@@ -19,9 +20,9 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class Loader {
 
-    private List<Integer> vaos = new ArrayList<>();
-    private List<Integer> vbos = new ArrayList<>();
-    private List<Integer> textures = new ArrayList<>();
+    private final List<Integer> vaos = new ArrayList<>();
+    private final List<Integer> vbos = new ArrayList<>();
+    private final List<Integer> textures = new ArrayList<>();
 
     public RawModel loadToVAO(float[] positions, int[] indices, float[] texCoords) {
         int vaoID = createVAO();
@@ -32,6 +33,17 @@ public class Loader {
         unbindVAO();
 
         return new RawModel(vaoID, indices.length);
+    }
+
+    public RawModel loadToVAO(ModelData data) {
+        int vaoID = createVAO();
+
+        bindIndicesBuffer(data.getIndices());
+        storeDataInAttributeList(0, 3, data.getVertices());
+        storeDataInAttributeList(1, 2, data.getTextureCoords());
+        unbindVAO();
+
+        return new RawModel(vaoID, data.getIndices().length);
     }
 
     public int loadTexture(String filename) throws IOException {
@@ -59,6 +71,7 @@ public class Loader {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, decoder.getWidth(), decoder.getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
 
         glBindTexture(GL_TEXTURE_2D, 0);
+        textures.add(textureID);
         return textureID;
     }
 
