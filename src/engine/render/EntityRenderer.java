@@ -3,6 +3,7 @@ package engine.render;
 import engine.entity.Entity;
 import engine.render.display.DisplayManager;
 import engine.shader.shaders.EntityShader;
+import engine.util.Logger;
 import engine.util.Maths;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
@@ -37,11 +38,14 @@ public class EntityRenderer {
         GL30.glBindVertexArray(model.getVaoID());
         GL20.glEnableVertexAttribArray(0);
         GL20.glEnableVertexAttribArray(1);
+        GL20.glEnableVertexAttribArray(2);
 
         Matrix4f transformMat = Maths.createTransformationMatrix(entity.getPosition(), entity.getRotation(), entity.getScale());
         shader.transformMat.load(transformMat);
-
         shader.viewMat.load(Maths.createViewMatrix(camera));
+
+        shader.shineDamper.load(texModel.getTexture().getShineDamper());
+        shader.reflectivity.load(texModel.getTexture().getReflectivity());
 
         GL13.glActiveTexture(GL13.GL_TEXTURE0);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, texModel.getTexture().getTextureID());
@@ -50,6 +54,7 @@ public class EntityRenderer {
 
         GL20.glDisableVertexAttribArray(0);
         GL20.glDisableVertexAttribArray(1);
+        GL20.glDisableVertexAttribArray(2);
         GL30.glBindVertexArray(0);
     }
 

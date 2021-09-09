@@ -24,26 +24,20 @@ public class Loader {
     private final List<Integer> vbos = new ArrayList<>();
     private final List<Integer> textures = new ArrayList<>();
 
-    public RawModel loadToVAO(float[] positions, int[] indices, float[] texCoords) {
+    public RawModel loadToVAO(float[] positions, int[] indices, float[] normals, float[] texCoords) {
         int vaoID = createVAO();
 
         bindIndicesBuffer(indices);
         storeDataInAttributeList(0, 3, positions);
         storeDataInAttributeList(1, 2, texCoords);
+        storeDataInAttributeList(2, 3, normals);
         unbindVAO();
 
         return new RawModel(vaoID, indices.length);
     }
 
     public RawModel loadToVAO(ModelData data) {
-        int vaoID = createVAO();
-
-        bindIndicesBuffer(data.getIndices());
-        storeDataInAttributeList(0, 3, data.getVertices());
-        storeDataInAttributeList(1, 2, data.getTextureCoords());
-        unbindVAO();
-
-        return new RawModel(vaoID, data.getIndices().length);
+        return loadToVAO(data.getVertices(), data.getIndices(), data.getNormals(), data.getTextureCoords());
     }
 
     public int loadTexture(String filename) throws IOException {

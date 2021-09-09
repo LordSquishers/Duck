@@ -12,6 +12,7 @@ import engine.shader.shaders.EntityShader;
 import engine.texture.ModelTexture;
 import engine.util.Logger;
 import engine.util.Maths;
+import light.PointLight;
 import org.joml.Vector3f;
 
 import java.io.IOException;
@@ -33,18 +34,23 @@ public class Duck {
         // Renderers
         var eRen = new EntityRenderer(eShader);
 
-        var modelData = OBJFileLoader.loadOBJ("stall.obj");
+        var modelData = OBJFileLoader.loadOBJ("dragon.obj");
         var rawModel = loader.loadToVAO(modelData);
         ModelTexture texture = null;
         try {
-            texture = new ModelTexture(loader.loadTexture("stallTexture.png"));
+            texture = new ModelTexture(loader.loadTexture("blue.png"));
+            texture.setReflectivity(1);
+            texture.setShineDamper(10);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         var fullModel = new TexturedModel(rawModel, texture);
-        var entity = new Entity(fullModel, new Vector3f(0, 0, -10), new Vector3f(90).mul(Maths.Y_AXIS), new Vector3f(1));
+        var entity = new Entity(fullModel, new Vector3f(0, 0, -25), new Vector3f(90).mul(Maths.Y_AXIS), new Vector3f(1));
         var camera = new Camera();
+        camera.setPosition(new Vector3f(0, 5, 0));
+
+        var light = new PointLight(new Vector3f(0, 5, -10), new Vector3f(1));
 
         Logger.INSTANCE.info(DUCK, "Environment initialised!");
         while (!display.isCloseRequested()) {
@@ -55,6 +61,9 @@ public class Duck {
             eRen.prepare();
 
             eShader.start();
+            eShader.minBrightness.load(0.15f);
+            eShader.pointLightPos.load(light.getPosition());
+            eShader.pointLightColor.load(light.getColor());
             eRen.render(camera, entity, eShader);
             eShader.stop();
 
