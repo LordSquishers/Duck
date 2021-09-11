@@ -2,20 +2,19 @@ package duck;
 
 import engine.entity.Entity;
 import engine.model.Loader;
-import engine.model.RawModel;
-import engine.model.TexturedModel;
-import engine.model.obj.OBJFileLoader;
 import engine.render.Camera;
-import engine.render.EntityRenderer;
+import engine.render.MasterRenderer;
 import engine.render.display.DisplayManager;
-import engine.shader.shaders.EntityShader;
-import engine.texture.ModelTexture;
+import engine.terrain.Terrain;
+import engine.util.Creator;
 import engine.util.Logger;
 import engine.util.Maths;
 import light.PointLight;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static engine.util.Logger.Source.*;
 
@@ -27,54 +26,52 @@ public class Duck {
 
         Logger.INSTANCE.info(DUCK, "Initialising environment...");
         var loader = new Loader();
-
-        // Shaders
-        var eShader = new EntityShader();
+        Creator.setLoader(loader);
 
         // Renderers
-        var eRen = new EntityRenderer(eShader);
+        var renderer = new MasterRenderer();
 
-        var modelData = OBJFileLoader.loadOBJ("dragon.obj");
-        var rawModel = loader.loadToVAO(modelData);
-        ModelTexture texture = null;
-        try {
-            texture = new ModelTexture(loader.loadTexture("blue.png"));
-            texture.setReflectivity(1);
-            texture.setShineDamper(10);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        // Entities
+        List<Entity> entities = new ArrayList<>();
 
-        var fullModel = new TexturedModel(rawModel, texture);
-        var entity = new Entity(fullModel, new Vector3f(0, 0, -25), new Vector3f(90).mul(Maths.Y_AXIS), new Vector3f(1));
+        var entity = Creator.createEntity("dragon.obj", "blue.png", new Vector3f(0, 0, -25), new Vector3f(90).mul(Maths.Y_AXIS), new Vector3f(1));
+        entities.add(entity);
+
+        // Terrains
+        //TODO- implement chunk/world system
+        List<Terrain> terrains = new ArrayList<>();
+
+        var terrain = Creator.createTerrain(new Vector2f(-1, -1), "blue.png");
+        var terrain2 = Creator.createTerrain(new Vector2f(0, -1), "blue.png");
+        terrains.add(terrain);
+        terrains.add(terrain2);
+
+        // Global Objects
         var camera = new Camera();
         camera.setPosition(new Vector3f(0, 5, 0));
 
-        var light = new PointLight(new Vector3f(0, 5, -10), new Vector3f(1));
+        //TODO- implement directional lights
+        var light = new PointLight(new Vector3f(0, 50, -10), new Vector3f(1));
 
         Logger.INSTANCE.info(DUCK, "Environment initialised!");
         while (!display.isCloseRequested()) {
             // movement
             camera.move();
 
-            // Entities
-            eRen.prepare();
-
-            eShader.start();
-            eShader.minBrightness.load(0.15f);
-            eShader.pointLightPos.load(light.getPosition());
-            eShader.pointLightColor.load(light.getColor());
-            eRen.render(camera, entity, eShader);
-            eShader.stop();
+            // Rendering
+            renderer.processEntities(entities);
+            renderer.processTerrains(terrains);
+            renderer.render(light, camera);
 
             display.update();
         }
 
+        // Cleanup
         Logger.INSTANCE.info(DUCK, "Cleaning up...");
-        // Shaders
-        eShader.clean();
 
+        renderer.clean();
         loader.clean();
+
         Logger.INSTANCE.info(DUCK, "Done!");
         display.close();
         Logger.INSTANCE.info(DUCK, "Exited.");

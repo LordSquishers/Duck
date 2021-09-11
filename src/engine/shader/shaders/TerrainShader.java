@@ -5,18 +5,16 @@ import engine.shader.uniform.Uniform1F;
 import engine.shader.uniform.Uniform3F;
 import engine.shader.uniform.Uniform4F;
 import engine.shader.uniform.UniformBoolean;
-import engine.util.Logger;
 
-public class EntityShader extends ShaderProgram {
+public class TerrainShader extends ShaderProgram {
 
     public Uniform4F transformMat, projectionMat, viewMat;
     public Uniform3F pointLightPos, pointLightColor, skyColor;
     public Uniform1F minBrightness, shineDamper, reflectivity, fogDensity, fogGradient;
     public UniformBoolean useFakeLighting;
 
-    public EntityShader() {
-        super(ShaderType.ENTITY);
-        Logger.INSTANCE.info(Logger.Source.SHADERS, "Entity shader initialised");
+    public TerrainShader() {
+        super(ShaderType.TERRAIN);
     }
 
     @Override
@@ -27,7 +25,6 @@ public class EntityShader extends ShaderProgram {
 
         pointLightPos = new Uniform3F("pointLightPos", programID);
         pointLightColor = new Uniform3F("pointLightColor", programID);
-
         skyColor = new Uniform3F("skyColor", programID);
 
         minBrightness = new Uniform1F("minBrightness", programID);
@@ -46,5 +43,4 @@ public class EntityShader extends ShaderProgram {
         super.bindAttribute(1, "texCoords");
         super.bindAttribute(2, "normal");
     }
-
 }

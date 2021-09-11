@@ -26,7 +26,7 @@ void main(void) {
     vec4 worldPos = transformMat * vec4(pos, 1.0);
     vec4 posRelativeToCam = viewMat * worldPos;
     gl_Position = projectionMat * posRelativeToCam;
-    _texCoords = texCoords;
+    _texCoords = texCoords * 40.0;
 
     vec3 outputNormal = normal;
     if(useFakeLighting > 0.5) { outputNormal = vec3(0, 1, 0); }

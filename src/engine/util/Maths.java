@@ -1,6 +1,7 @@
 package engine.util;
 
 import engine.render.Camera;
+import engine.render.display.DisplayManager;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -43,6 +44,24 @@ public class Maths {
         viewMat.translate(negCameraPos);
 
         return viewMat;
+    }
+
+    public static Matrix4f createProjectionMatrix(float fov, float nearPlane, float farPlane) {
+        var projectionMat = new Matrix4f();
+        float aspectRatio = (float) DisplayManager.WIDTH / (float) DisplayManager.HEIGHT;
+        float yScale = (float) ((1f / Math.tan(Math.toRadians(fov / 2f))) * aspectRatio);
+        float xScale = yScale / aspectRatio;
+        float frustum_length = farPlane - nearPlane;
+
+        projectionMat = new Matrix4f();
+        projectionMat.m00(xScale);
+        projectionMat.m11(yScale);
+        projectionMat.m22(-(farPlane + nearPlane) / frustum_length);
+        projectionMat.m23(-1);
+        projectionMat.m32(-(2 * nearPlane * farPlane) / frustum_length);
+        projectionMat.m33(0);
+
+        return projectionMat;
     }
 
 }

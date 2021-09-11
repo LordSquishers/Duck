@@ -3,6 +3,7 @@ package engine.shader;
 import engine.util.Logger;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL32;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -13,7 +14,8 @@ import static engine.util.Logger.Source.SHADERS;
 public abstract class ShaderProgram {
 
     public enum ShaderType {
-        ENTITY("entity");
+        ENTITY("entity"),
+        TERRAIN("terrain");
 
         public String name;
         ShaderType(String _name) {
@@ -22,7 +24,7 @@ public abstract class ShaderProgram {
     }
 
     public enum ShaderFileType {
-        VERTEX("VSH", GL20.GL_VERTEX_SHADER), FRAGMENT("FSH", GL20.GL_FRAGMENT_SHADER);
+        VERTEX("VSH", GL20.GL_VERTEX_SHADER), FRAGMENT("FSH", GL20.GL_FRAGMENT_SHADER), GEOMETRY("GSH", GL32.GL_GEOMETRY_SHADER);
 
         public String name;
         public int id;
