@@ -9,7 +9,7 @@ import engine.terrain.Terrain;
 import engine.util.Creator;
 import engine.util.Logger;
 import engine.util.Maths;
-import light.PointLight;
+import engine.light.PointLight;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 

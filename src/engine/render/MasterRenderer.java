@@ -4,7 +4,7 @@ import engine.entity.Entity;
 import engine.model.TexturedModel;
 import engine.terrain.Terrain;
 import engine.util.Maths;
-import light.PointLight;
+import engine.light.PointLight;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 
