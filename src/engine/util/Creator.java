@@ -4,6 +4,7 @@ import engine.entity.Entity;
 import engine.model.Loader;
 import engine.model.TexturedModel;
 import engine.model.obj.OBJFileLoader;
+import engine.shader.ShaderProgram;
 import engine.terrain.Terrain;
 import engine.texture.ModelTexture;
 import org.joml.Vector2f;
@@ -19,7 +20,15 @@ public class Creator {
         var modelData = OBJFileLoader.loadOBJ(modelName);
         var rawModel = loader.loadToVAO(modelData);
         var texture = createTexture(textureName);
-        var fullModel = new TexturedModel(rawModel, texture);
+        var fullModel = new TexturedModel(rawModel, texture, ShaderProgram.ShaderType.ENTITY);
+        return new Entity(fullModel, position, rotation, scale);
+    }
+
+    public static Entity createSingleColorEntity(String modelName, String textureName, Vector3f position, Vector3f rotation, Vector3f scale) {
+        var modelData = OBJFileLoader.loadOBJ(modelName);
+        var rawModel = loader.loadToUntexturedVAO(modelData);
+        var texture = createTexture(textureName);
+        var fullModel = new TexturedModel(rawModel, texture, ShaderProgram.ShaderType.ENTITY);
         return new Entity(fullModel, position, rotation, scale);
     }
 

@@ -3,6 +3,7 @@ package engine.terrain;
 import engine.model.Loader;
 import engine.model.TexturedModel;
 import engine.model.obj.ModelData;
+import engine.shader.ShaderProgram;
 import engine.texture.ModelTexture;
 import org.joml.Vector2f;
 
@@ -55,7 +56,7 @@ public class Terrain {
             }
         }
         var modelData = new ModelData(vertices, textureCoords, normals, indices, -1);
-        return new TexturedModel(loader.loadToVAO(modelData), texture);
+        return new TexturedModel(loader.loadToVAO(modelData), texture, ShaderProgram.ShaderType.TERRAIN);
     }
 
     public Vector2f getPosition() {

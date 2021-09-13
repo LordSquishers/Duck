@@ -5,14 +5,18 @@ import engine.model.Loader;
 import engine.render.Camera;
 import engine.render.MasterRenderer;
 import engine.render.display.DisplayManager;
+import engine.shader.ShaderProgram;
 import engine.terrain.Terrain;
 import engine.util.Creator;
 import engine.util.Logger;
 import engine.util.Maths;
 import engine.light.PointLight;
+import engine.util.Mouse;
+import org.joml.Math;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +38,9 @@ public class Duck {
         // Entities
         List<Entity> entities = new ArrayList<>();
 
-        var entity = Creator.createEntity("dragon.obj", "blue.png", new Vector3f(0, 0, -25), new Vector3f(90).mul(Maths.Y_AXIS), new Vector3f(1));
+        var entity = Creator.createSingleColorEntity("dragon.obj", "blue.png", new Vector3f(0, 0, -25), new Vector3f(90).mul(Maths.Y_AXIS), new Vector3f(1));
+        entity.getModel().setShaderType(ShaderProgram.ShaderType.SINGLE_COLOR);
+        entity.getModel().getTexture().setSingleColor(new Vector3f(0, 1, 1));
         entities.add(entity);
 
         // Terrains
@@ -43,6 +49,7 @@ public class Duck {
 
         var terrain = Creator.createTerrain(new Vector2f(-1, -1), "blue.png");
         var terrain2 = Creator.createTerrain(new Vector2f(0, -1), "blue.png");
+
         terrains.add(terrain);
         terrains.add(terrain2);
 
@@ -58,8 +65,13 @@ public class Duck {
             // movement
             camera.move();
 
+            var mouseColorY = (float) (Mouse.getMouseY() / 720f);
+            var mouseColorX = (float) (Mouse.getMouseX() / 1280f);
+            entity.getModel().getTexture().setSingleColor(new Vector3f(0, mouseColorX, mouseColorY));
+            renderer.processEntity(entity);
+
             // Rendering
-            renderer.processEntities(entities);
+//            renderer.processEntities(entities);
             renderer.processTerrains(terrains);
             renderer.render(light, camera);
 

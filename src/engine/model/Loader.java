@@ -36,8 +36,23 @@ public class Loader {
         return new RawModel(vaoID, indices.length);
     }
 
+    public RawModel loadToUntexturedVAO(float[] positions, int[] indices, float[] normals) {
+        int vaoID = createVAO();
+
+        bindIndicesBuffer(indices);
+        storeDataInAttributeList(0, 3, positions);
+        storeDataInAttributeList(1, 3, normals);
+        unbindVAO();
+
+        return new RawModel(vaoID, indices.length);
+    }
+
     public RawModel loadToVAO(ModelData data) {
         return loadToVAO(data.getVertices(), data.getIndices(), data.getNormals(), data.getTextureCoords());
+    }
+
+    public RawModel loadToUntexturedVAO(ModelData data) {
+        return loadToUntexturedVAO(data.getVertices(), data.getIndices(), data.getNormals());
     }
 
     public int loadTexture(String filename) throws IOException {

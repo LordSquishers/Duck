@@ -1,11 +1,14 @@
 package engine.texture;
 
+import org.joml.Vector3f;
+
 public class ModelTexture {
 
     private final int textureID;
 
     private float shineDamper = 1f, reflectivity = 0f;
     private boolean isOpaque = true, useFakeLighting = false;
+    private Vector3f singleColor;
 
     public ModelTexture(int textureID) {
         this.textureID = textureID;
@@ -45,5 +48,13 @@ public class ModelTexture {
 
     public void useFakeLighting(boolean useFakeLighting) {
         this.useFakeLighting = useFakeLighting;
+    }
+
+    public Vector3f getSingleColor() {
+        return singleColor;
+    }
+
+    public void setSingleColor(Vector3f singleColor) {
+        this.singleColor = singleColor;
     }
 }

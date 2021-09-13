@@ -15,7 +15,8 @@ public abstract class ShaderProgram {
 
     public enum ShaderType {
         ENTITY("entity"),
-        TERRAIN("terrain");
+        TERRAIN("terrain"),
+        SINGLE_COLOR("singleColor");
 
         public String name;
         ShaderType(String _name) {
@@ -37,6 +38,8 @@ public abstract class ShaderProgram {
     protected int programID;
     private final int vshID;
     private final int fshID;
+
+    protected ShaderType type;
 
     public ShaderProgram(ShaderType shaderType) {
         vshID = loadShader(shaderType, ShaderFileType.VERTEX);
@@ -111,4 +114,7 @@ public abstract class ShaderProgram {
         return shaderID;
     }
 
+    public ShaderType getType() {
+        return type;
+    }
 }

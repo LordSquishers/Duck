@@ -2,6 +2,7 @@ package engine.render;
 
 import engine.entity.Entity;
 import engine.model.TexturedModel;
+import engine.shader.ShaderProgram;
 import engine.terrain.Terrain;
 import engine.util.Maths;
 import engine.light.PointLight;
@@ -20,10 +21,13 @@ public class MasterRenderer {
     private static final float FOV = 70, NEAR_PLANE = 0.1f, FAR_PLANE = 1000f;
 
     private EntityRenderer entity = new EntityRenderer();
+    private SingleColorRenderer singleColor = new SingleColorRenderer();
     private TerrainRenderer terrain = new TerrainRenderer();
 
     private Map<TexturedModel, List<Entity>> entities = new HashMap<>();
+    private Map<TexturedModel, List<Entity>> singleColorEntities = new HashMap<>();
     private List<Terrain> terrains = new ArrayList<>();
+    
     private Matrix4f projectionMat;
 
     public MasterRenderer() {
@@ -38,6 +42,10 @@ public class MasterRenderer {
         terrain.shader.start();
         terrain.shader.projectionMat.load(projectionMat);
         terrain.shader.stop();
+
+        singleColor.shader.start();
+        singleColor.shader.projectionMat.load(projectionMat);
+        singleColor.shader.stop();
     }
 
     public void render(PointLight sun, Camera camera) {
@@ -60,6 +68,24 @@ public class MasterRenderer {
 
         entity.shader.stop();
         entities.clear();
+
+        /* SINGLE COLOR ENTITIES */
+        singleColor.shader.start();
+
+        singleColor.shader.pointLightPos.load(sun.getPosition());
+        singleColor.shader.pointLightColor.load(sun.getColor());
+        singleColor.shader.minBrightness.load(MINIMUM_BRIGHTNESS);
+        singleColor.shader.skyColor.load(SKY_COLOR);
+
+        singleColor.shader.fogDensity.load(FOG_DENSITY);
+        singleColor.shader.fogGradient.load(FOG_GRADIENT);
+
+        singleColor.shader.viewMat.load(Maths.createViewMatrix(camera));
+
+        singleColor.render(singleColorEntities);
+
+        singleColor.shader.stop();
+        singleColorEntities.clear();
 
         /* TERRAINS */
         terrain.shader.start();
@@ -90,14 +116,18 @@ public class MasterRenderer {
     }
 
     public void processEntity(Entity e) {
+        var entityList = entities;
         var entityModel = e.getModel();
-        List<Entity> batch = entities.get(entityModel);
+
+        if(entityModel.getShaderType() == ShaderProgram.ShaderType.SINGLE_COLOR) entityList = singleColorEntities;
+
+        List<Entity> batch = entityList.get(entityModel);
         if(batch != null) {
             batch.add(e);
         } else {
             List<Entity> newBatch = new ArrayList<>();
             newBatch.add(e);
-            entities.put(entityModel, newBatch);
+            entityList.put(entityModel, newBatch);
         }
     }
 

@@ -2,8 +2,8 @@ package engine.render;
 
 import engine.entity.Entity;
 import engine.model.TexturedModel;
-import engine.shader.ShaderProgram;
 import engine.shader.shaders.EntityShader;
+import engine.shader.shaders.SingleColorShader;
 import engine.util.Maths;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
@@ -14,12 +14,12 @@ import org.lwjgl.opengl.GL30;
 import java.util.List;
 import java.util.Map;
 
-public class EntityRenderer {
+public class SingleColorRenderer {
 
-    public EntityShader shader;
+    public SingleColorShader shader;
 
-    public EntityRenderer() {
-        this.shader = new EntityShader();
+    public SingleColorRenderer() {
+        this.shader = new SingleColorShader();
     }
 
     public void render(Map<TexturedModel, List<Entity>> entities) {
@@ -42,14 +42,14 @@ public class EntityRenderer {
         GL30.glBindVertexArray(rawModel.getVaoID());
         GL20.glEnableVertexAttribArray(0);
         GL20.glEnableVertexAttribArray(1);
-        GL20.glEnableVertexAttribArray(2);
 
-        if(!texture.isOpaque()) MasterRenderer.setBackfaceCulling(false);
-        else MasterRenderer.setBackfaceCulling(true);
+        MasterRenderer.setBackfaceCulling(texture.isOpaque());
 
         shader.useFakeLighting.load(texture.usesFakeLighting());
         shader.shineDamper.load(texture.getShineDamper());
         shader.reflectivity.load(texture.getReflectivity());
+
+        shader.renderColor.load(texture.getSingleColor());
 
         GL13.glActiveTexture(GL13.GL_TEXTURE0);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture.getTextureID());
@@ -58,7 +58,6 @@ public class EntityRenderer {
     private void unbindTexturedModel() {
         GL20.glDisableVertexAttribArray(0);
         GL20.glDisableVertexAttribArray(1);
-        GL20.glDisableVertexAttribArray(2);
         GL30.glBindVertexArray(0);
     }
 
@@ -66,5 +65,4 @@ public class EntityRenderer {
         Matrix4f transformMat = Maths.createTransformationMatrix(entity.getPosition(), entity.getRotation(), entity.getScale());
         shader.transformMat.load(transformMat);
     }
-
 }
